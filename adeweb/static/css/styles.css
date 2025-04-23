@@ -1,0 +1,14 @@
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ocupa toda la altura del viewport */
+    text-align: center;
+    flex-direction: column; /* Opcional, útil si tienes varios elementos */
+}
+
+.plotly-container {
+    width: 100%;
+    height: calc(100vh - 80px); /* ajusta si tienes barra superior */
+    overflow: hidden;
+}

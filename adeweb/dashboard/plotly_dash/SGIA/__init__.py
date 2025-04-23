@@ -1,0 +1,1 @@
+# Empty file to make SGIA a proper Python package

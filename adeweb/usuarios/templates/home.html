@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Inicio | Monster Web{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Panel de Control</h2>
+
+<div class="row">
+    <!-- Tarjeta 1 -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Dashboard</h5>
+                <p class="card-text">Revisa el progreso de los objevitos.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-sm btn-outline-primary">Ver más</a>
+                    <small class="text-muted">9 archivos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Proyectos</h5>
+                <p class="card-text">Administra tus proyectos activos.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver más</a>
+                    <small class="text-muted">4 proyectos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Tareas</h5>
+                <p class="card-text">Revisa tus tareas pendientes.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver más</a>
+                    <small class="text-muted">12 tareas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta 4 -->
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Estadísticas</h5>
+                <p class="card-text">Visualiza el rendimiento del sistema.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver más</a>
+                    <small class="text-muted">Actualizado</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load plotly_dash %}
+
+{% block title %}Dashboard | Monster Web{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Dashboard</h2>
+    <div class="card shadow">
+        <div class="card-body p-0">
+            {% plotly_app name="MiDashboard" %}
+        </div>
+    </div>
+</div>
+{% endblock %}
