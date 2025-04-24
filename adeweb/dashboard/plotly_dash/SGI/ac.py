@@ -6,6 +6,7 @@ from .load_sgia import load_ac
 df_ac = load_ac()
 df = df_ac[df_ac['Sucursal'] == 'DILUSA']
 
+df.columns = df.columns.str.strip()
 df = df.copy()
 df.index = df['Código']
 df = df.drop(columns=['Código'])

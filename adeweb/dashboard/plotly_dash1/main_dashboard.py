@@ -1,23 +1,23 @@
-from ACI.load_aci import bpm_operativo_df, bpm_personales_df
-from ACI.BPM import bpmoperativas, bpmpersonales, filtro_area
-from ACI.mb_indicadores import actualizar_grafico_indicadores, filtro
-from ACI.porc_liberaciones import actualizar_grafico_liberaciones
-from ACI.dash_calidad import calidad_dash_layout
-from SGI.tif import estatus_general, codigo_entrada
-from SGI.control_documental import control_docs, df_docs
-from SGI.dash_sgia import sgia_dash_layout
-from SGI.ac import eficiencia, requisito_tipo, estatus_grl, df3
-from SGI.load_sgia import load_tif
-from MTO.dash_mantenimiento import mantenimiento_dash_layout, df_mto
-from MTO import eficiencia_mtto, porc_mtto
-from MTO.porc_mtto import df1
-from MTO.load_mtto import df
-from POES.dash_poes import poes_dash_layout, update_graphs
+from .ACI.load_aci import bpm_operativo_df, bpm_personales_df
+from .ACI.BPM import bpmoperativas, bpmpersonales, filtro_area
+from .ACI.mb_indicadores import actualizar_grafico_indicadores, filtro
+from .ACI.porc_liberaciones import actualizar_grafico_liberaciones
+from .ACI.dash_calidad import calidad_dash_layout
+from .SGI.tif import estatus_general, codigo_entrada
+from .SGI.control_documental import control_docs, df_docs
+from .SGI.dash_sgia import sgia_dash_layout
+from .SGI.ac import eficiencia, requisito_tipo, estatus_grl, df3
+from .SGI.load_sgia import load_tif
+from .MTO.dash_mantenimiento import mantenimiento_dash_layout, df_mto
+from .MTO import eficiencia_mtto, porc_mtto
+from .MTO.porc_mtto import df1
+from .MTO.load_mtto import df
+from .POES.dash_poes import poes_dash_layout, update_graphs
 import plotly.graph_objects as go
 from django_plotly_dash import DjangoDash
 from dash import Dash, dcc, html, Input, Output, dash_table
 import pandas as pd
-import styles
+from . import styles
 import sys
 import os
 
@@ -29,7 +29,7 @@ start_date = pd.to_datetime(bpm_operativo_df.index.min(), errors='coerce')
 end_date = pd.to_datetime(bpm_operativo_df.index.max(), errors='coerce')
 df_tif = load_tif()
 
-dashboard_eda = Dash("Dashboard", suppress_callback_exceptions=True)
+dashboard_eda = DjangoDash("Dashboard", suppress_callback_exceptions=True)
 
 dashboard_eda.layout = html.Div(
     children=[
@@ -626,7 +626,7 @@ def graficos_poes(filtro_area, **kwargs):
     fig_serie, fig_promedios = update_graphs(filtro_area)
     return fig_serie, fig_promedios
 
-if __name__ == "__main__":
-    dashboard_eda.run(debug=True)
+# if __name__ == "__main__":
+#     dashboard_eda.run(debug=True)
 
 

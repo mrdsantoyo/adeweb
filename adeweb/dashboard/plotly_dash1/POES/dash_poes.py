@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
 from .load_poes import df
-import styles
+from .. import styles
 
 import sys
 import os

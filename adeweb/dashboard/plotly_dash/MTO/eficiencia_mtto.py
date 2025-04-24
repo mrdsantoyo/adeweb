@@ -40,12 +40,6 @@ df1['MES'].replace(
     inplace=True
 )
 
-# orden_meses = [
-#     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-#     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-# ]
-# df1['MES'] = pd.Categorical(df1['MES'], categories=orden_meses, ordered=True)
-
 def actualizar_graficos(filtro_equipo, filtro_tecnico, filtro_area):
     df_filtrado = df1.copy()
     
@@ -66,7 +60,7 @@ def actualizar_graficos(filtro_equipo, filtro_tecnico, filtro_area):
         go.Scatter(
             x=eficiencia['FECHA'],
             y=eficiencia['PorcentajeRealizados'],
-            mode='lines+markers',
+            mode='markers',
             hoverlabel=dict(namelength=0),
             name='Eficiencia %'
         )

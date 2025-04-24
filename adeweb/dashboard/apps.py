@@ -5,4 +5,4 @@ class DashboardConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "dashboard"
     def ready(self):
-        from .plotly_dash import main_dashboard
+        from .plotly_dash1 import main_dashboard

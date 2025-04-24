@@ -1,9 +1,9 @@
 import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, html, dcc, Input, Output, dash_table
-from MTTO import eficiencia_mtto, porc_mtto
-from MTTO.porc_mtto import df1
-from MTTO.load_mtto import df
+from . import eficiencia_mtto, porc_mtto
+from .porc_mtto import df1
+from .load_mtto import df
 import warnings
 warnings.filterwarnings('ignore')
 import sys
@@ -13,8 +13,8 @@ import styles
 
 
 df['FECHA'] = pd.to_datetime(df['FECHA'], errors='coerce', format='%d/%b/%Y')#.astype(str)
-df=df.sort_values(by='FECHA', ascending=False)
-df['FECHA'] = df['FECHA'].dt.strftime('%d/%m/%Y')
+df_mto=df.sort_values(by='FECHA', ascending=False)
+df_mto['FECHA'] = df_mto['FECHA'].dt.strftime('%d/%m/%Y')
 
 mantenimiento_dash_layout = html.Div(
     children=[

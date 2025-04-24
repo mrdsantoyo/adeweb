@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
+    # 'dpd_static_support',
     "usuarios",
     "dashboard",
     ]   
@@ -50,6 +51,20 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     ]
+
+# STATICFILES_FINDERS = [
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#     'django_plotly_dash.finders.DashAssetFinder',
+#     'django_plotly_dash.finders.DashComponentFinder',
+#     ]
+
+# PLOTLY_DASH = {
+#     "inject_stylesheet": True,
+#     "external_stylesheets": [
+#         '/static/css/styles.css',  # Tu hoja de estilos personalizada
+#         ],
+#     }
 
 ROOT_URLCONF = "adeweb.urls"
 
