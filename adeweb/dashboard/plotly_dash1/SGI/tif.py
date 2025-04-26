@@ -34,7 +34,7 @@ def codigo_entrada():
         xaxis_title='Departamento',
         yaxis_title='Conteo',
         title='Conteo de registros por Departamento y código de entrada (SIS)',
-        template='plotly_dark',
+        template='plotly_white',
         showlegend=False
     )
     return codigo_entrada
@@ -62,8 +62,16 @@ def estatus_general(filtro_departamento):
     )
     estatus_tif.update_layout(
         title='Estatus de desviaciones TIF',
-        template='plotly_dark',
-        showlegend=False
+        template='plotly_white',
+        showlegend=False,
+        margin=dict(l=30, r=30, t=40, b=30), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
     )
     return estatus_tif
 
@@ -80,7 +88,7 @@ def eficiencia_mensual():
     
     graf_eficiencia.update_layout(
         title='Código de entrada',
-        template='plotly_dark',
+        template='plotly_white',
         showlegend=True
     )
     return graf_eficiencia

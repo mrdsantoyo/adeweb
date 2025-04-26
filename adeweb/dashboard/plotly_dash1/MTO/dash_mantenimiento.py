@@ -147,7 +147,7 @@ mantenimiento_dash_layout = html.Div(
             style = {
                 'display': 'flex',
                 'alignItems': 'flex-start',
-                'template': 'plotly_dark',
+                'template': 'plotly_white',
                 **styles.GRL
             },
             )

@@ -59,7 +59,7 @@ def home(request):
 def logout(request):
     auth_logout(request)
     messages.success(request, 'Has cerrado sesión exitosamente.')
-    return redirect('usuarios:login') 
+    return redirect('usuarios:logout') 
 
 @login_required
 def editar_perfil(request):

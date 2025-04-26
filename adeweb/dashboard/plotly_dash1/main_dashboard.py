@@ -10,9 +10,10 @@ from .SGI.ac import eficiencia, requisito_tipo, estatus_grl, df3
 from .SGI.load_sgia import load_tif
 from .MTO.dash_mantenimiento import mantenimiento_dash_layout, df_mto
 from .MTO import eficiencia_mtto, porc_mtto
+from .MTO.porc_mtto import df
 from .MTO.porc_mtto import df1
-from .MTO.load_mtto import df
-from .POES.dash_poes import poes_dash_layout, update_graphs
+from .MTO.load_mtto import df0
+from .POES.dash_poes import poes_dash_layout, update_graphs, df_poes
 import plotly.graph_objects as go
 from django_plotly_dash import DjangoDash
 from dash import Dash, dcc, html, Input, Output, dash_table
@@ -29,7 +30,7 @@ start_date = pd.to_datetime(bpm_operativo_df.index.min(), errors='coerce')
 end_date = pd.to_datetime(bpm_operativo_df.index.max(), errors='coerce')
 df_tif = load_tif()
 
-dashboard_eda = DjangoDash("Dashboard", suppress_callback_exceptions=True)
+dashboard_eda = DjangoDash("Dashboard")
 
 dashboard_eda.layout = html.Div(
     children=[
@@ -136,16 +137,20 @@ dashboard_eda.layout = html.Div(
                     ),
                 ],
                 style={
-                    "backgroundColor": "#111111",
-                    "color":"#888",
+                    "backgroundColor": "#ffffff",
+                    "color":"#000000",
                     "border":"none",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
-                    "padding": "10px"
+                    "padding": "10px",
+                    "borderTopLeftRadius": "10px",
+                    "borderTopRightRadius": "10px"
                     },
                 selected_style={
-                    "backgroundColor": "#2b2b2b",
-                    "color": "#fff",
+                    "backgroundColor": "#f0f0f0",
+                    "color": "#000000",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
                     "padding": "10px",
@@ -179,7 +184,7 @@ dashboard_eda.layout = html.Div(
                         ),
                         dcc.Dropdown(id='filtro_area_mto', 
                             className='',
-                            options = [{'label': x.upper(), 'value': x.upper()} for x in df1['AREA'].dropna().unique()],
+                            options = [{'label': x.upper(), 'value': x.upper()} for x in df1['ÁREA'].dropna().unique()],
                             value='',
                             multi=True,
                             placeholder='Selecciona un área.',
@@ -191,48 +196,47 @@ dashboard_eda.layout = html.Div(
                         children=[
                             dcc.Graph(id='realizados', 
                                 style = {
-                                    'width':'25%',
+                                    'width':'30%',
                                     **styles.GRL}
                             ),
                             dcc.Graph(id='eficiencia',
                                 style = {
-                                    'width':'50%',
+                                    'width':'35%',
                                     **styles.GRL}
                             ),
                             html.Div(
                                 dash_table.DataTable(id='tabla-mttos',
-                                    columns = [{"name": col, "id": col} for col in df.columns if col in ['FECHA','EQUIPO', 'ÁREA', 'ESTATUS']],
+                                    columns = [{"name": col, "id": col} for col in df0.columns if col in ['FECHA','EQUIPO', 'ÁREA', 'ESTATUS']],
                                     data = df.to_dict('records'),
                                     filter_action = "native",  # Agrega barra de búsqueda
                                     page_action = 'none',
                                     filter_query = "{ESTATUS} != REALIZADO",
                                     style_table = {
-                                        # 'width': '500px',  # 🔹 Ajusta el ancho de la tabla
+                                        'width': 'auto',  # 🔹 Ajusta el ancho de la tabla
                                         'margin': '0 auto',  # 🔹 Centra la tabla horizontalmente
                                         'height': '450px',  # 🔹 Ajusta la altura máxima
                                         'overflowY': 'scroll',  # 🔹 Agrega scroll vertical
                                     },
-                                    style_cell = {
-                                        'minWidth': '100px', 
-                                        'maxWidth': '200px', 
-                                        'width': 'auto',
+                                    style_cell={
+                                        'minWidth': '50px',
+                                        # 'maxWidth': '165px',
+                                        'width': 'auto', 
                                         'whiteSpace': 'normal',
                                         'textAlign': 'center',
-                                        'fontFamily': 'Arial, sans-serif',
-                                        'fontSize': '14px',
+                                        'fontFamily': 'Helvetica, sans-serif',
+                                        'fontSize': '13px'
                                     },
                                     style_header={
-                                        'backgroundColor': 'black',
-                                        'color': 'white',
+                                        'backgroundColor': '#b3b3b3',
+                                        'color': 'black',
                                         'fontWeight': 'bold',
-                                        'textAlign': 'center',
-                                        'backgroundColor': '#2b2b2b'
+                                        'textAlign': 'center'
                                     },
                                     style_data_conditional=[
                                         {
                                             'if':{'filter_query':"{ESTATUS} = 'REALIZADO'"},
                                             'backgroundColor': 'white',
-                                            'color': 'black'
+                                            'color': 'MediumSeaGreen'
                                         },
                                         {  
                                             'if': {'filter_query': "{ESTATUS} = 'FUERA DE SERVICIO'"},
@@ -241,7 +245,7 @@ dashboard_eda.layout = html.Div(
                                         },
                                         {
                                             'if': {'filter_query': "{ESTATUS} = 'REPROGRAMADO'"},
-                                            'backgroundColor': 'red',#'#9d2626',
+                                            'backgroundColor': 'firebrick',#'firebrick',
                                             'color': 'white'
                                         },
                                         {
@@ -258,7 +262,7 @@ dashboard_eda.layout = html.Div(
                                         ]
                                 ),
                                 style = {
-                                    'width': '40%',
+                                    'width': '35%',
                                     'display': 'inline-block'
                                 }
                             )
@@ -273,16 +277,20 @@ dashboard_eda.layout = html.Div(
                     ),
                 ],
                 style={
-                    "backgroundColor": "#111111",
-                    "color":"#888",
+                    "backgroundColor": "#ffffff",
+                    "color":"#000000",
                     "border":"none",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
-                    "padding": "10px"
+                    "padding": "10px",
+                    "borderTopLeftRadius": "10px",
+                    "borderTopRightRadius": "10px"
                     },
                 selected_style={
-                    "backgroundColor": "#2b2b2b",
-                    "color": "#fff",
+                    "backgroundColor": "#f0f0f0",
+                    "color": "#000000",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
                     "padding": "10px",
@@ -322,40 +330,46 @@ dashboard_eda.layout = html.Div(
                                     **styles.GRL
                                 }
                             ),
-                            dash_table.DataTable(id='eficiencia_documental',
-                                columns=[{"name": col, "id": col} for col in df_docs.columns],
-                                data=df_docs.to_dict('records'),
-                                filter_action="native",
-                                page_action='none',
-                                style_table={
-                                    'width': 'auto',
-                                    'margin': '0 auto',
-                                    'height': '300px',
-                                    'overflowY': 'scroll'
-                                },
-                                style_cell={
-                                    'minWidth': '100px',
-                                    'maxWidth': '200px',
-                                    'width': 'auto',
-                                    'whiteSpace': 'normal',
-                                    'textAlign': 'center',
-                                    'fontFamily': 'Arial, sans-serif',
-                                    'fontSize': '14px'
-                                },
-                                style_header={
-                                    'backgroundColor': '#2b2b2b',
-                                    'color': 'white',
-                                    'fontWeight': 'bold',
-                                    'textAlign': 'center'
-                                },
-                                style_data_conditional=[
-                                    {
-                                        'if': {'filter_query': "{Eficiencia} <= '50'"},
-                                        'backgroundColor': 'firebrick',
-                                        'color': 'white'
-                                    }
-                                ]
-                            )
+                            html.Div(
+                                dash_table.DataTable(id='eficiencia_documental',
+                                    columns=[{"name": col, "id": col} for col in df_docs.columns],
+                                    data=df_docs.to_dict('records'),
+                                    filter_action="native",
+                                    page_action='none',
+                                    style_table={
+                                        'width': 'auto',
+                                        'margin': '0 auto',
+                                        'height': '300px',
+                                        'overflowY': 'scroll'
+                                    },
+                                    style_cell={
+                                        'minWidth': '80px',
+                                        'maxWidth': '165px',
+                                        'width': 'auto',
+                                        'whiteSpace': 'normal',
+                                        'textAlign': 'center',
+                                        'fontFamily': 'Helvetica, sans-serif',
+                                        'fontSize': '14px'
+                                    },
+                                    style_header={
+                                        'backgroundColor': '#b3b3b3',
+                                        'color': 'black',
+                                        'fontWeight': 'bold',
+                                        'textAlign': 'center'
+                                    },
+                                    style_data_conditional=[
+                                        {
+                                            'if': {'filter_query': "{Eficiencia} <= '50'"},
+                                            'backgroundColor': 'firebrick',
+                                            'color': 'white'
+                                        }
+                                    ]
+                                ),
+                                style = {
+                                    'width': '30%',
+                                    'display': 'inline-block'
+                                }
+                                )
                         ],
                         style={
                             'display': 'flex',
@@ -431,16 +445,20 @@ dashboard_eda.layout = html.Div(
                     )
                 ],
                 style={
-                    "backgroundColor": "#111111",
-                    "color":"#888",
+                    "backgroundColor": "#ffffff",
+                    "color":"#000000",
                     "border":"none",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
-                    "padding": "10px"
+                    "padding": "10px",
+                    "borderTopLeftRadius": "10px",
+                    "borderTopRightRadius": "10px"
                     },
                 selected_style={
-                    "backgroundColor": "#2b2b2b",
-                    "color": "#fff",
+                    "backgroundColor": "#f0f0f0",
+                    "color": "#000000",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
                     "padding": "10px",
@@ -462,7 +480,7 @@ dashboard_eda.layout = html.Div(
                                 disabled=True
                             ),
                             dcc.Dropdown(id='filtro_area_poes',
-                                options=[{'label': area, 'value': area} for area in df.columns],    
+                                options=[{'label': area, 'value': area} for area in df_poes.columns],    
                                 value=[],
                                 placeholder='Selecciona un departamento.',
                                 multi=True,
@@ -496,16 +514,20 @@ dashboard_eda.layout = html.Div(
                 )
                 ],
                 style={
-                    "backgroundColor": "#111111",
-                    "color":"#888",
+                    "backgroundColor": "#ffffff",
+                    "color":"#000000",
                     "border":"none",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
-                    "padding": "10px"
+                    "padding": "10px",
+                    "borderTopLeftRadius": "10px",
+                    "borderTopRightRadius": "10px"
                     },
                 selected_style={
-                    "backgroundColor": "#2b2b2b",
-                    "color": "#fff",
+                    "backgroundColor": "#f0f0f0",
+                    "color": "#000000",
+                    'fontFamily': 'Arial, sans-serif',
                     "fontWeight": "bold",
                     "fontSize": "16px",
                     "padding": "10px",
@@ -519,10 +541,16 @@ dashboard_eda.layout = html.Div(
                 )
             ],
             style = {
-                'backgroundColor' : '#2b2b2b',
+                'backgroundColor' : '#ffffff',
             }
-        )
+        )   
     ],
+    style={
+        'width': '100%',
+        'height': '100%',
+        'margin': '0',
+        'padding': '0'
+    },
 )
 
 ##ACI CALLBACK

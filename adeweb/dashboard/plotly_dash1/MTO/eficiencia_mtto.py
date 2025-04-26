@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
-from .load_mtto import df
+from .load_mtto import df0
 import warnings
 warnings.filterwarnings('ignore')
 import sys
@@ -9,11 +9,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import styles
 
-df = df
+df = df0
 df = df.dropna(subset=['FECHA'])
 df = df.drop(columns=['TIEMPO_RAW', 'SEMANA', 'TIEMPO'])
 
-df['FECHA'] = pd.to_datetime(df['FECHA'], format='%d/%m/%Y')
+df['FECHA'] = pd.to_datetime(df['FECHA'], format='%d/%b/%Y')
 
 df = df.sort_values(by='FECHA', ascending=True)
 
@@ -58,7 +58,7 @@ def actualizar_graficos(filtro_equipo, filtro_tecnico, filtro_area):
     graf_eficiencia = go.Figure()
     graf_eficiencia.add_trace(
         go.Scatter(
-            x=eficiencia['FECHA'],
+            x= [x.strftime('%Y-%m') for x in eficiencia['FECHA']],
             y=eficiencia['PorcentajeRealizados'],
             mode='markers',
             hoverlabel=dict(namelength=0),
@@ -69,7 +69,7 @@ def actualizar_graficos(filtro_equipo, filtro_tecnico, filtro_area):
         title='Eficiencia de Mantenimientos',
         xaxis_title='Mes',
         yaxis_title='Porcentaje (%)',
-        template='plotly_dark'
+        template='plotly_white'
     )
     
     return graf_eficiencia

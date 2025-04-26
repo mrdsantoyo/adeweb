@@ -70,7 +70,7 @@ def eficiencia(filtro_departamento):
             mode='markers',
             hoverinfo='name+y',
             marker=dict(
-                size=12,
+                size=7,
                 color='red'
                 ),
             )
@@ -102,11 +102,19 @@ def eficiencia(filtro_departamento):
             gridcolor='white'
             ),
         barmode='stack',
-        template='plotly_dark',
+        template='plotly_white',
         showlegend=False,
         xaxis=dict(
             tickangle=-45
-            )
+            ),
+        margin=dict(l=30, r=30, t=40, b=30), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
         )
     return ac2
 
@@ -144,14 +152,22 @@ def requisito_tipo():
 
     ac1.update_layout(title='Requisitos con mayor incidencia de NC',
         barmode='stack',
-        template='plotly_dark',
+        template='plotly_white',
         showlegend=False,
         xaxis=dict(
         tickmode='array',
         tickvals=original_labels,  # O los valores correspondientes
         ticktext=truncated_labels,
         tickangle=-45  # opcional, para rotarlas
-    )
+        ),
+        margin=dict(l=30, r=30, t=40, b=30), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
         )
 
     return ac1
@@ -172,8 +188,16 @@ def estatus_grl():
         )
     )
     estatus_grl.update_layout(title='Acciones correctivas',
-            template='plotly_dark',
-            showlegend=False
+            template='plotly_white',
+            showlegend=False,
+            margin=dict(l=30, r=30, t=40, b=30), 
+            legend=dict(
+                orientation="h", 
+                yanchor="bottom",
+                y=-0.3,  
+                xanchor="right",
+                x=0.5
+            )
             )
 
     return estatus_grl

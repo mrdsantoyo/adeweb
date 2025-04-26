@@ -35,7 +35,7 @@ def control_docs():
         )
     docs.update_layout(title='Estatus de Documentación',
         barmode='stack',
-        template='plotly_dark',
+        template='plotly_white',
         showlegend=True
     )
     return docs

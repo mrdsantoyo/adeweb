@@ -18,39 +18,6 @@ productos_unicos = [producto for producto in productos_unicos if producto is not
 
 filtro = [{'label': producto, 'value': producto} for producto in productos_unicos]
 
-# liberaciones = Dash(__name__)
-
-# liberaciones.layout = html.Div(
-#     children=[
-#         dcc.Dropdown(
-#             id='producto-filter-liberaciones',
-#             options=filtro,
-#             value=None,
-#             placeholder="Selecciona un producto",
-#             multi=True,
-#             style={
-#                 'width': '500px',
-#                 'backgroundColor': '#2A2A2A'
-#             },
-#         ),
-#         dcc.Interval(
-#             id='interval-component-liberaciones',
-#             interval=3600 * 1000,  # 1 hora en milisegundos
-#             n_intervals=0
-#         ),
-#         dcc.Graph(
-#             id='liberaciones-graf',
-#             style={
-#                 'width': '500px',
-#                 'height': '500px'
-#             }
-#         )
-#     ]
-# )
-# @liberaciones.callback(
-#     Output('liberaciones-graf', 'figure'),
-#     Input('producto-filter-liberaciones', 'value'))
-
 def actualizar_grafico_liberaciones(filtro_producto):
     # Asegurar que filtro_producto sea una lista
     if filtro_producto is None or len(filtro_producto) == 0:
@@ -77,9 +44,16 @@ def actualizar_grafico_liberaciones(filtro_producto):
         )
 
     pt_estatus.update_layout(
-        title='Porcentaje de Liberación por Estatus',
-        template='plotly_dark',
-        showlegend=True
+        title='Estatus de liberación',
+        template='plotly_white',
+        margin=dict(l=30, r=30, t=40, b=30), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
     )
 
     return pt_estatus

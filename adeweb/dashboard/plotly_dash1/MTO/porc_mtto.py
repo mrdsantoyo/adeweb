@@ -41,8 +41,16 @@ def update_graphs(filtro_equipo, filtro_tecnico, filtro_area):
     )
     graf_realizados.update_layout(
         title='Total de Preventivos Realizados',
-        template='plotly_dark',
-        showlegend=True
+        template='plotly_white',
+        showlegend=True,
+        margin=dict(l=20, r=20, t=40, b=20), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        ),
     )
 
     return graf_realizados

@@ -1,7 +1,7 @@
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objects as go
-import styles
+from .. import styles
 from .load_aci import bpm_operativo_df, bpm_personales_df
 from .BPM import bpmoperativas, bpmpersonales, filtro_area
 from .mb_indicadores import actualizar_grafico_indicadores, filtro

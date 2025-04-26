@@ -5,7 +5,7 @@ from .tif import estatus_general, codigo_entrada
 from .load_sgia import load_tif
 from .control_documental import control_docs, df_docs
 from .ac import eficiencia, requisito_tipo, estatus_grl, df3
-import styles
+from .. import styles
 
 # Cargar y preparar datos
 df_tif = load_tif()

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-$4anv-()8kv-7oe@$t-av3n1rjknhpqf0o)8y5d-c%8v)jg^nu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_plotly_dash.apps.DjangoPlotlyDashConfig",
-    # 'dpd_static_support',
+    "django_plotly_dash",
+    'dpd_static_support',
+    'channels',
     "usuarios",
     "dashboard",
     ]   
@@ -50,21 +51,40 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django_plotly_dash.middleware.BaseMiddleware',
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     ]
 
-# STATICFILES_FINDERS = [
-#     'django.contrib.staticfiles.finders.FileSystemFinder',
-#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#     'django_plotly_dash.finders.DashAssetFinder',
-#     'django_plotly_dash.finders.DashComponentFinder',
-#     ]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder',
+    'django_plotly_dash.finders.DashAppDirectoryFinder',
+    ]
 
-# PLOTLY_DASH = {
-#     "inject_stylesheet": True,
-#     "external_stylesheets": [
-#         '/static/css/styles.css',  # Tu hoja de estilos personalizada
-#         ],
-#     }
+PLOTLY_DASH = {
+    "inject_dash_apps_scripts": True,  # Cambiado a False
+    "inject_plotly": True,
+
+    "serve_locally": False,
+    # "insert_demo_migrations": False,
+    # "inject_stylesheet": True,
+    "external_stylesheets": [
+        '/static/css/styles.css',  # Tu hoja de estilos personalizada
+    ],
+    "external_scripts": [
+        "https://unpkg.com/react@16.14.0/umd/react.production.min.js",
+        "https://unpkg.com/react-dom@16.14.0/umd/react-dom.production.min.js",
+        "https://unpkg.com/prop-types@15.8.1/prop-types.min.js",
+        "https://cdn.plot.ly/plotly-latest.min.js",
+        "https://unpkg.com/dash-core-components@2.0.0/dash_core_components/dash_core_components.min.js",
+        "https://unpkg.com/dash-html-components@2.0.0/dash_html_components/dash_html_components.min.js",
+        "https://unpkg.com/dash-renderer@1.9.1/dash_renderer/dash_renderer.min.js",
+    ],
+
+}
 
 ROOT_URLCONF = "adeweb.urls"
 
@@ -132,9 +152,15 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-    ]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#TATIC_ROOT = BASE_DIR / 'staticfiles'
+
+#STATICFILES_DIRS = [
+#    BASE_DIR, 'static',
+#    ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -159,4 +185,5 @@ PLOTLY_COMPONENTS = [
     'dash_html_components',
     'dash_renderer',
     'dpd_components',
+    'dash_table',
     ]

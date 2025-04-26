@@ -1,17 +1,19 @@
 {% extends "base.html" %}
+{% load static %}
 {% load plotly_dash %}
 
 {% block title %}Dashboard | Monster Web{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h2 class="mb-4">Dashboard</h2>
-    <div class="card shadow">
-        <div class="card-body p-0">
-            <div class="dashboard-container" style="width: 100%; height: 800px;">
-                {% plotly_app name="Dashboard" %}
+<div class="container-fluid px-0 border-1">  <!-- Removemos padding lateral -->
+    <div class="card shadow border-0">  <!-- Quitamos bordes -->
+        <div class="card-body p-0">  <!-- Quitamos padding -->
+            <div class="plotly-container" style="width: 100%; min-height: 100%; border-radius: 5px; overflow:scroll;">
+                {% plotly_app name="Dashboard" ratio=1 %}
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+

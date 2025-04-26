@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import styles
+from .. import styles
 
 
 df['FECHA'] = pd.to_datetime(df['FECHA'], errors='coerce', format='%d/%b/%Y')#.astype(str)

@@ -100,7 +100,7 @@ def actualizar_grafico_indicadores(filtro_producto):
             fig.update_layout(
                 xaxis_title='Fecha', 
                 yaxis_title='UFC/g', 
-                template='plotly_dark', 
+                template='plotly_white', 
                 showlegend=False
             )
         return fig_mesofilicos, fig_coliformes_10, fig_coliformes_5
@@ -160,22 +160,22 @@ def actualizar_grafico_indicadores(filtro_producto):
         title="Mesofílicos (<10'000 UFC/g)", 
         xaxis_title='Fecha', 
         yaxis_title='UFC/g', 
-        template='plotly_dark', 
+        template='plotly_white', 
         showlegend=False
     )
     fig_coliformes_10.update_layout(
         title='Coliformes (<10 UFC/g)', 
         xaxis_title='Fecha', 
         yaxis_title='UFC/g', 
-        template='plotly_dark', 
+        template='plotly_white', 
         showlegend=False
     )
     fig_coliformes_5.update_layout(
         title="Coliformes (<5'000 UFC/g)", 
         xaxis_title='Fecha', 
         yaxis_title='UFC/g', 
-        template='plotly_dark', 
-        showlegend=True
+        template='plotly_white', 
+        showlegend=False
     )
     return fig_mesofilicos, fig_coliformes_10, fig_coliformes_5
 

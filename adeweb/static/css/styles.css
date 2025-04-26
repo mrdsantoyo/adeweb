@@ -32,3 +32,18 @@
     display: flex !important;
     flex-wrap: wrap !important;
 }
+
+/* Asegura que el iframe de Dash ocupe todo el espacio */
+.dash-iframe-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 80vh;
+}
+
+/* Elimina márgenes/padding predeterminados */
+.plotly-container .django-plotly-dash {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}

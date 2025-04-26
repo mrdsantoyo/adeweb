@@ -9,11 +9,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Preprocesamiento de datos similar a load_mtto.py
-df = df.dropna(how='all', axis=1)
-df.index = pd.to_datetime(df.index)
+df_poes = df.dropna(how='all', axis=1)
+df_poes.index = pd.to_datetime(df_poes.index)
 # Filtrar solo columnas numéricas antes de calcular promedios
-numeric_cols = df.select_dtypes(include=['number']).columns
-df_mes = df[numeric_cols].groupby(df.index.month).mean().T
+numeric_cols = df_poes.select_dtypes(include=['number']).columns
+df_mes = df_poes[numeric_cols].groupby(df_poes.index.month).mean().T
 
 # poes_dash = Dash(__name__)
 
@@ -153,7 +153,7 @@ def update_graphs(filtro_area):
         title=f'Serie temporal - {filtro_area}',
         xaxis_title='Mes',
         yaxis_title='Valor',
-        template = 'plotly_dark'
+        template = 'plotly_white'
     )
 
         # Promedio por mes
@@ -168,7 +168,7 @@ def update_graphs(filtro_area):
         title=f'Promedios mensuales - {filtro_area}',
         xaxis_title='Mes',
         yaxis_title='Valor',
-        template = 'plotly_dark'
+        template = 'plotly_white'
     )
 
     return fig_serie, fig_promedios

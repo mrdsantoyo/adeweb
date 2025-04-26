@@ -101,10 +101,9 @@ df.rename(
 )
 
 df['ESTATUS'] = df['ESTATUS'].replace('FS', 'FUERA DE SERVICIO')
-df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
+df0 = df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
-df = df.sort_values(by='FECHA', ascending=False)
-
-
+df0 = df0.sort_values(by='FECHA', ascending=False)
+# df['FECHA'] = df['FECHA'].dt.strftime('%d/%b/%y')
 
 # return df
