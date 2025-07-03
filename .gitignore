@@ -1,5 +1,11 @@
-# Ignore Jupyter Notebooks
+# Ignore Jupyter Notebooks, PDF, WORD; EXCEL
 *.ipynb
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.xlsm
 
 # Ignore node_modules folder
 node_modules/
@@ -33,4 +39,5 @@ venv/
 -control-documental-html-/
 *.sqlite3
 
-
+*.json
+*.dat

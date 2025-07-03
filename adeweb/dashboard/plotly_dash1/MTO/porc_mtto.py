@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
-from .load_mtto import df
+from .load_mtto import df0, porcentajes
 import warnings
 warnings.filterwarnings('ignore')
 import sys
@@ -9,8 +9,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import styles
 
+df = df0.copy()
+df.columns = df0.columns.str.strip(' ')
 df = df.dropna(subset=['FECHA'])
-df= df.drop(columns=['TIEMPO_RAW', 'SEMANA', 'TIEMPO'])
+df = df.drop(columns=['TIEMPO_RAW', 'SEMANA', 'TIEMPO'])
 df['FECHA'] = pd.to_datetime(df['FECHA'], format='%d/%m/%Y').dt.strftime('%d/%m/%Y')
 df['ESTATUS'] = df['ESTATUS'].astype(str).str.strip().str.upper()
 df1 = df.sort_values(by='FECHA', ascending=False)
@@ -52,6 +54,30 @@ def update_graphs(filtro_equipo, filtro_tecnico, filtro_area):
             x=0.5
         ),
     )
-
     return graf_realizados
 
+def relacion():
+    relacion = go.Figure()
+    relacion.add_trace(
+        go.Pie(
+            labels=["PREVENTIVOS", "CORRECTIVOS", "SERVICIOS"],
+            values=porcentajes,
+            pull= 0.01,
+            hoverinfo='label+text+percent',
+        )
+    )
+
+    relacion.update_layout(
+        title='Total de Preventivos Realizados',
+        template='plotly_white',
+        showlegend=True,
+        # margin=dict(l=20, r=20, t=20, b=20),
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        ),
+    )
+    return relacion

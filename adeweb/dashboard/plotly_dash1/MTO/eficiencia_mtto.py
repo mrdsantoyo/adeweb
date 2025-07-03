@@ -62,14 +62,15 @@ def actualizar_graficos(filtro_equipo, filtro_tecnico, filtro_area):
             y=eficiencia['PorcentajeRealizados'],
             mode='markers',
             hoverlabel=dict(namelength=0),
-            name='Eficiencia %'
+            name='Eficiencia %',
+            opacity=0.6,
         )
     )
     graf_eficiencia.update_layout(
         title='Eficiencia de Mantenimientos',
         xaxis_title='Mes',
         yaxis_title='Porcentaje (%)',
-        template='plotly_white'
+        template='plotly_white',
     )
     
     return graf_eficiencia

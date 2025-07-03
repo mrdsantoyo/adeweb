@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 ##### LIBERACIÓN de PT ######
 dfs = []
 sheets = {
-    "CHICHARRÓN PRENSADO": "A,C:F,L:Q,S,T,X:AF",
+    "CHICHARRÓN PRENSADO": "A:AQ",
     "PELLET": "A,C:F,L:Q,S,T,X:AJ",
     "PORCIONADOS": "A,C:E,K:O,Q,R,V:AA",
     "EMBUTIDOS": "A,C:E,K:Q,S,T,X:AB",
@@ -19,20 +19,22 @@ sheets = {
     "COCIDOS Y ESTERILIZADOS": "A,C:D,F,G,M:Q,S,T,X:AE"
     }
 
-for sheet_name, cols in sheets.items():
-    try:
-        # workbook = pd.ExcelFile("Excel\\D-FTO-ACI-083 Bitácora de liberación de PT 2025.xlsx")
-        workbook = "//192.168.10.2/Compartidos/Calidad Compartida (192.168.10.254)/8. BITACORA DE LIBERACIÓN DE PT Y MP/D-FTO-ACI-083 Bitácora de liberación de PT 2025.xlsx"
-        df = pd.read_excel(
-            workbook,
-            sheet_name=sheet_name,
-            usecols=cols,
-            skiprows=8  # Saltar filas irrelevantes
-        )
-        dfs.append(df)
-    except Exception as e:
-        print(f"Error cargando {sheet_name}: {e}")
-        pass
+# ruta_archivo = pd.ExcelFile("Excel\\D-FTO-ACI-083 Bitácora de liberación de PT 2025.xlsx")
+with pd.ExcelFile(r"//192.168.10.2/Compartidos/Calidad Compartida (192.168.10.254)/8. BITACORA DE LIBERACIÓN DE PT Y MP/D-FTO-ACI-083 Bitácora de liberación de PT 2025.xlsx", engine='openpyxl') as workbook:
+    for sheet, cols in sheets.items():
+        try:
+            df = pd.read_excel(
+                workbook,
+                sheet_name=sheet,
+                usecols=cols,
+                skiprows=8
+            )
+            dfs.append(df)
+
+        except Exception as e:
+            print(f"Error cargando {sheet}: {e}")
+    # dfs = pd.concat(dfs, ignore_index=True)
+    workbook.close()
 
 ##### BPM's OPERATIVAS ######
 sheets_bpm = {
@@ -49,23 +51,27 @@ sheets_bpm = {
     "NOVIEMBRE": "A:K",
     "DICIEMBRE": "A:K"
     }
-
 bpm_operativo_df = pd.DataFrame()
-for sheet, cols in sheets_bpm.items():
-    try:
-        # workbook_bpm = pd.ExcelFile(r"C:/Users/daniel.santoyo/KPI-EDA/Excel/Bitacora de BPM's 2025.xlsx")
-        workbook_bpm = r"//192.168.10.2/Compartidos/Calidad Compartida (192.168.10.254)/5. KPI´s calidad/2025/Bitacora de BPM's 2025.xlsx"
-        temp_df = pd.read_excel(
-            workbook_bpm,
-            sheet_name=sheet,
-            usecols=cols,
-            nrows=21,
-            header=1
-        )
-        bpm_operativo_df = pd.concat([bpm_operativo_df, temp_df], axis=1)
-    except Exception as e:
-        # print(f"✖️ La hoja {sheet} en {workbook_bpm.book if hasattr(workbook_bpm, 'book') else 'workbook'} no existe: {e}")
-        pass
+
+# workbook_bpm = pd.ExcelFile(r"C:/Users/daniel.santoyo/KPI-EDA/Excel/Bitacora de BPM's 2025.xlsx")
+workbook_bpm = r"//192.168.10.2/Compartidos/Calidad Compartida (192.168.10.254)/5. KPI´s calidad/2025/Bitacora de BPM's 2025 NUEVO.xlsx"
+
+with pd.ExcelFile(workbook_bpm, engine='openpyxl') as workbook:
+    for sheet, cols in sheets_bpm.items():
+        try:
+                temp_df = pd.read_excel(
+                    workbook,
+                    sheet_name=sheet,
+                    usecols=cols,
+                    nrows=21,
+                    header=1
+                    )
+                bpm_operativo_df = pd.concat([bpm_operativo_df, temp_df], axis=1)
+        except Exception as e:
+            # print(f"✖️ La hoja {sheet} en {workbook_bpm.book if hasattr(workbook_bpm, 'book') else 'workbook'} no existe: {e}")
+            pass
+    workbook.close()
+
 bpm_operativo_df = bpm_operativo_df.T
 bpm_operativo_df.columns = bpm_operativo_df.iloc[0]
 bpm_operativo_df = bpm_operativo_df.drop(bpm_operativo_df.index[0])
@@ -98,20 +104,25 @@ print(f"✅ Se cargaron {bpm_operativo_df.shape[0]} filas〰️ y {bpm_operativo
 
 ##### BPM's PERSONALES ######
 bpm_personales_df = pd.DataFrame()
-for sheet, cols in sheets_bpm.items():
-    try:
-        temp_df = pd.read_excel(
-            workbook_bpm,
-            sheet_name=sheet,
-            usecols=cols,
+workbook_bpm = r"//192.168.10.2/Compartidos/Calidad Compartida (192.168.10.254)/5. KPI´s calidad/2025/Bitacora de BPM's 2025 NUEVO.xlsx"
+
+with pd.ExcelFile(workbook_bpm, engine='openpyxl') as workbook:
+    for sheet, cols in sheets_bpm.items():
+        try:
+            temp_df = pd.read_excel(
+                workbook,
+                sheet_name=sheet,
+                usecols=cols,
             nrows=25,
             skiprows=23,
             header=1
-        )
-        bpm_personales_df = pd.concat([bpm_personales_df, temp_df], axis=1)
-    except Exception as e:
-        # print(f"✖️ La hoja {sheet} en {workbook_bpm.book if hasattr(workbook_bpm, 'book') else 'workbook'} no existe: {e}")
-        pass
+            )
+            bpm_personales_df = pd.concat([bpm_personales_df, temp_df], axis=1)
+        except Exception as e:
+            # print(f"✖️ La hoja {sheet} en {workbook_bpm.book if hasattr(workbook_bpm, 'book') else 'workbook'} no existe: {e}")
+            pass
+    workbook.close()
+
 
 bpm_personales_df = bpm_personales_df.T
 bpm_personales_df.columns = bpm_personales_df.iloc[0]
@@ -145,3 +156,4 @@ bpm_personales_df['PROMEDIOS DIARIOS'] = bpm_personales_df.drop(columns=['MES'],
 bpm_personales_df = bpm_personales_df[bpm_personales_df["PROMEDIOS DIARIOS"] != 0]
 
 print(f"✅ Se cargaron {bpm_personales_df.shape[0]} filas〰️ y {bpm_personales_df.shape[1]} columnas🔼 de BPM's PERSONALES")
+

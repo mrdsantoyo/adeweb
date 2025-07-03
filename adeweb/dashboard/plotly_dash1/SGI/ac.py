@@ -29,12 +29,12 @@ pivo = pivo.sort_values('Totales', ascending=False)
 pivo =pivo.head(10)
 pivo = pivo.reset_index()
 
-df1 = df[['Requisito', 'Departamento', 'Fecha de la NC', 'Fecha compromiso', 'Fecha de cierre real', 'Estatus']]
+df1 = df[['Requisito', 'Responsable', 'Fecha de la NC', 'Fecha compromiso', 'Fecha de cierre real', 'Estatus']]
 df1['Fecha de la NC'] = pd.to_datetime(df1['Fecha de la NC'], errors='coerce')
 df1['Mes'] = df1['Fecha de la NC'].dt.to_period('M')
 eficiencia_mensual = df1.groupby('Mes')['Estatus'].apply(lambda x: ((x=='Abierta').sum() / x.count())*100)
 
-df2 = df[['Requisito', 'Departamento', 'Fecha de la NC', 'Fecha compromiso', 'Fecha de cierre real', 'Tipo de NC', 'Estatus']]
+df2 = df[['Requisito', 'Responsable', 'Fecha de la NC', 'Fecha compromiso', 'Fecha de cierre real', 'Tipo de NC', 'Estatus']]
 df2['Fecha compromiso'] = pd.to_datetime(df2['Fecha compromiso'], errors='coerce')
 df2 = df2.sort_values('Fecha compromiso', ascending=False)
 df2['Mes'] = df2['Fecha compromiso'].dt.to_period('M')
@@ -42,18 +42,17 @@ df2 = df2.sort_values('Mes', ascending=False)
 df2 = df2[df2['Estatus'] != 'Cerradas']
 df2 = pd.pivot_table(data=df2, index='Mes', columns='Tipo de NC', aggfunc='size', fill_value=0)
 
-df3 = df[['Departamento', 'Fecha compromiso', 'Tipo de NC', 'Comentario', 'Estatus']]
+df3 = df[['Responsable', 'Fecha compromiso', 'Tipo de NC', 'Comentario', 'Estatus']]
 df3['Fecha compromiso'] = pd.to_datetime(df3['Fecha compromiso'], errors='coerce')
 df3 = df3.sort_values('Fecha compromiso', ascending=False)
 df3['Mes'] = df3['Fecha compromiso'].dt.to_period('M')
 df3 = df3.sort_values('Mes', ascending=False)
 df3 = df3[df3['Estatus'] != 'Cerradas']
 
-
 def eficiencia(filtro_departamento):
     
     if filtro_departamento:
-        df_filtrado = df1[df1['Departamento'] == filtro_departamento]
+        df_filtrado = df1[df1['Responsable'] == filtro_departamento]
         eficiencia_mensual = df_filtrado.groupby('Mes')['Estatus'] \
             .apply(lambda x: ((x=='Abierta').sum() / x.count())*100)
     else:

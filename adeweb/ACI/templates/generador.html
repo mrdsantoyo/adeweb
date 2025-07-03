@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Inicio |{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Generador de Documentos :)</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Generar Certificado de Calidad</h3>
+        <form method="post" action="{% url 'generador_documentos' %}">
+            {% csrf_token %}
+            {% if form %}
+                {{ form.as_p }}
+                <button type="submit" class="bi bi-ui-checks">Generar Certificado</button>
+            {% else %}
+                <p>Error: No form data available</p>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Aquí puedes agregar scripts adicionales si es necesario
+</script>
+{% endblock %}

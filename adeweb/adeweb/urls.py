@@ -12,12 +12,14 @@ urlpatterns = [
 
     path('usuarios/', include(('usuarios.urls', 'usuarios'), namespace='usuarios')),
     path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard')),
+    path('ACI/', include(('ACI.urls', 'ACI'), namespace='ACI')),
     
     path('django_plotly_dash/', include(('django_plotly_dash.urls', 'django_plotly_dash'), namespace='the_django_plotly_dash')),
     ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

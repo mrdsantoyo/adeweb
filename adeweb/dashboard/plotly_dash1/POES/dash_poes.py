@@ -1,205 +1,170 @@
 import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
-from .load_poes import df
-from .. import styles
-
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from POES.load_poes import df 
+try:
+    import styles
+except ModuleNotFoundError:
+    styles = None 
+import sys
+import os
 
-# Preprocesamiento de datos similar a load_mtto.py
-df_poes = df.dropna(how='all', axis=1)
-df_poes.index = pd.to_datetime(df_poes.index)
-# Filtrar solo columnas numéricas antes de calcular promedios
-numeric_cols = df_poes.select_dtypes(include=['number']).columns
-df_mes = df_poes[numeric_cols].groupby(df_poes.index.month).mean().T
+df_poes = df
+df_poes.columns = df_poes.columns.str.strip(' ')
+df_poes.index = pd.to_datetime(df_poes.index, errors='coerce')
+df_poes['Promedios Diarios'] = df_poes.mean(axis=1).round(2)
+df_poes = df_poes.dropna(subset=['Promedios Diarios'])
+df_poes = df_poes.fillna(df_poes.mean()).round(2)
+df_poes = df_poes.sort_index(ascending=False)
 
-# poes_dash = Dash(__name__)
+mensual = df_poes.groupby(df_poes.index.month).mean().round(2).drop(columns=['Promedios Diarios'])
+mensual.index = mensual.index.map({1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+                                5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+                                9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'})
+mensual['Promedios Diarios'] = mensual.mean(axis=1).round(2)
 
-poes_dash_layout = html.Div(
-    children=[
-        html.Header(id='header',
-            children=[
-                html.Img(id='Logo',
-                    src="/assets/Dilusa Logo byn.png",
-                    alt="Logo",
-                    style={
-                        'height': '100px', 
-                        'backgroundColor': '#2b2b2b'
-                        }
-                    ),
-                html.H2(id='header1',
-                    children="KPI's POES",
-                    style={
-                        'alignItems': 'center',
-                        "justifyContent": "space-around",
-                        'display': 'flex',
-                        'color': 'white',
-                        **styles.GRL
-                        }
-                    ),
-                ],
-            style={
-                'backgroundColor': '#2b2b2b',
-                'height': '110px',
-                'display': 'flex',
-                "alignItems": "center"
-                }
-            ),
-        html.Div(id='filtros',
-            children=[
-                dcc.Interval(id='intervalo',
-                    interval=3600,
-                    n_intervals=0,
-                    disabled=True
-                    ),
-                dcc.Dropdown(id='filtro_area',
-                    options=[{'label': area, 'value': area} for area in df.columns],    
-                    value=[],
-                    placeholder='Selecciona un departamento.',
-                    multi=True,
-                    style=styles.DROPDOWN_100
-                    )
-                ],
-            style={
-                'display': 'flex',
-                'flexDirection': 'row',
-                'flexWrap': 'wrap',
-                **styles.GRL
-                }
-            ),
-        html.Div(id='graficos',
-            children=[
-                dcc.Graph(id='serie-temporal',
-                    style={
-                        'width': '70%', 
-                        'height': '300px', 
-                        **styles.GRL
-                        }
-                    ),
-                dcc.Graph(id='promedios-mensuales',
-                    style={
-                        'width': '70%', 
-                        'height': '300px', 
-                        **styles.GRL
-                        }
-                    ),
-                ],
-            style={
-                'display': 'flex', 
-                'flexDirection': 'row', 
-                'flexWrap': 'wrap', 
-                **styles.GRL
-                }
+df_distribucion = pd.DataFrame()
+df_distribucion['valores'] = df_poes.values.flatten()
+
+def update_graphs(areas_a_mostrar):                 #########################
+    mensual_filtrado = mensual.copy()
+    
+    columnas_a_mostrar = [col for col in mensual_filtrado.columns 
+                        if col in areas_a_mostrar or col == 'Promedios Diarios']
+    
+    poes_fig = go.Figure()
+    
+    for area in areas_a_mostrar:
+
+        if area != 'Promedios Diarios':
+            poes_fig.add_trace(
+                go.Box(
+                    y=mensual_filtrado[area],
+                    name=area.split(' y ')[0],
+                    boxmean=True,
+                )
             )
-        ],
-    style={
-        'display': 'flex', 
-        'flexDirection': 'row', 
-        'flexWrap': 'wrap', 
-        **styles.GRL
-        }
+        else:
+            poes_fig.add_annotation(
+                text="Selecciona un área para visualizar datos",
+                xref="paper",
+                yref="paper",
+                # x=0.5,
+                # y=0.5,
+                showarrow=False,
+                font=dict(size=16, color='gray'),
+                bgcolor='white',  
+                opacity=0.9
+            )
+
+
+    poes_fig.update_layout(
+        title_text="Distribución de calificaciones por Área",
+        height=350,
+        yaxis_title="%",
+        xaxis_title="Área",
+        showlegend=False,
+        template='plotly_white',
+        xaxis=dict(
+            tickangle=45,  
+        ),
+        margin=dict(l=20, r=20, t=40, b=20), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
     )
 
-# @poes_dash.callback(
-#     Output('serie-temporal', 'figure'),
-#     Output('promedios-mensuales', 'figure'),
-#     Input('filtro_area', 'value')
-# )
-
-
-def update_graphs(filtro_area):
+    distribucion = go.Figure()
+    df_filtrado = df_poes[[col for col in df_poes.columns.str.strip(' ') 
+                        if col in areas_a_mostrar and col != 'Promedios Diarios']]
     
-    if not filtro_area:
-        fig_serie = go.Figure()
-        fig_serie.add_annotation(text="Selecciona un área para visualizar datos", showarrow=False)
-        fig_promedios = go.Figure()
-        fig_promedios.add_annotation(text="Selecciona un área para visualizar datos", showarrow=False)
-        return fig_serie, fig_promedios
+    valores_filtrados = df_filtrado.values.flatten()
     
-    # Si filtro_area tiene valores, filtrar las columnas que coincidan
-    # Asumiendo que quieres mostrar datos para las áreas seleccionadas
-    # Esto podría necesitar ajustes según tu estructura de datos exacta
-    df_filtrado = df[filtro_area]
+    if valores_filtrados.size == 0:
+        valores_filtrados = df_poes['Promedios Diarios'].values.flatten()  ##########
     
-
-    if df_filtrado.empty:
-        fig_serie = go.Figure()
-        fig_serie.add_annotation(text="No hay datos disponibles", showarrow=False)
-        fig_promedios = go.Figure()
-        fig_promedios.add_annotation(text="No hay datos disponibles", showarrow=False)
-        return fig_serie, fig_promedios
-
-
-    df_filtrado = df_filtrado[df_filtrado['mes'].astype(str).str.isdigit()]
-    df_filtrado['mes'] = df_filtrado['mes'].astype(int)
-    df_filtrado = df_filtrado[(df_filtrado['mes'] >= 1) & (df_filtrado['mes'] <= 12)]
-    meses_catalogo = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-    df_filtrado['mes_nombre'] = df_filtrado['mes'].apply(lambda m: meses_catalogo[m - 1])
-
-    # Ordenar por mes
-    df_filtrado = df_filtrado.sort_values(by='mes')
-
-    # Gráfico de serie temporal
-    fig_serie = go.Figure()
-    fig_serie.add_trace(go.Scatter(
-        x=df_filtrado['mes_nombre'],
-        y=df_filtrado['valor'],
-        mode='lines+markers',
-        name=f'Serie temporal - {filtro_area}'
-    ))
-    fig_serie.update_layout(
-        title=f'Serie temporal - {filtro_area}',
-        xaxis_title='Mes',
-        yaxis_title='Valor',
-        template = 'plotly_white'
+    distribucion.add_trace(
+        go.Histogram(
+            x=valores_filtrados,
+            nbinsx=20,
+            xbins=dict(start=1, end=100, size=.2),
+            marker_color='indianred',
+            marker_line_color='black',
+        )
     )
 
-        # Promedio por mes
-    df_promedios = df_filtrado.groupby('mes_nombre', sort=False)['valor'].mean().reset_index()
-    fig_promedios = go.Figure()
-    fig_promedios.add_trace(go.Bar(
-        x=df_promedios['mes_nombre'],
-        y=df_promedios['valor'],
-        name=f'Promedios mensuales - {filtro_area}'
-    ))
-    fig_promedios.update_layout(
-        title=f'Promedios mensuales - {filtro_area}',
-        xaxis_title='Mes',
-        yaxis_title='Valor',
-        template = 'plotly_white'
+    distribucion.update_layout(
+        title_text="Tendencia de calificación de POES",
+        height=350,
+        yaxis_title="Calificacion",
+        xaxis_title="Resultados",
+        showlegend=False,
+        template='plotly_white',
+        barmode='overlay',
+        xaxis=dict(
+            tickangle=45,  
+            tickmode='auto',
+        ),
+        margin=dict(l=30, r=30, t=50, b=30), 
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom",
+            y=-0.3,  
+            xanchor="right",
+            x=0.5
+        )
     )
-
-    return fig_serie, fig_promedios
-
-
-# def update_graphs1(filtro_area):
-#     df_filtrado = df[df.columns == filtro_area]
-
-#     if df_filtrado.empty:
-#         return go.Figure(), go.Figure()
-
-#     df_filtrado = df_filtrado[df_filtrado['mes'].astype(str).str.isdigit()]
-#     df_filtrado['mes'] = df_filtrado['mes'].astype(int)
-#     df_filtrado = df_filtrado[(df_filtrado['mes'] >= 1) & (df_filtrado['mes'] <= 12)]
-#     meses_catalogo = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-#     df_filtrado['mes_nombre'] = df_filtrado['mes'].apply(lambda m: meses_catalogo[m - 1])
-
+    poes_tendencia = df
+    poes_tendencia.columns = poes_tendencia.columns.str.strip(' ')
+    poes_tendencia['Promedios Diarios'] = poes_tendencia.mean(axis=1).round(2)
+    poes_tendencia = poes_tendencia.dropna(subset=['Promedios Diarios'])
     
-#     df_filtrado = df_filtrado.sort_values(by='mes')
-#     # Promedio por mes
-#     df_promedios = df_filtrado.groupby('mes_nombre', sort=False)['valor'].mean().reset_index()
-#     fig_promedios = go.Figure()
-#     fig_promedios.add_trace(go.Bar(
-#         x=df_promedios['mes_nombre'],
-#         y=df_promedios['valor'],
-#         name=f'Promedios mensuales - {filtro_area}'
-#     ))
-#     fig_promedios.update_layout(
-#         title=f'Promedios mensuales - {filtro_area}',
-#         xaxis_title='Mes',
-#         yaxis_title='Valor'
-#     )
-#     return  fig_promedios
+    tendencia = go.Figure()
+    
+    if areas_a_mostrar:
+        for departamento in areas_a_mostrar:
+            if departamento != 'Promedios Diarios':
+                tendencia.add_trace(
+                    go.Scatter(
+                        x=poes_tendencia.index,
+                        y=poes_tendencia[departamento],
+                        mode='markers',
+                        hovertemplate=f'{departamento}<br>%{{x}}<br>%{{y}}%<extra></extra>',
+                        name=departamento,
+                    )
+                )
+        tendencia.update_layout(
+            title_text="Calificación de POES",
+            height=350,
+            yaxis_title="Calificacion",
+            xaxis_title="Fecha",
+            showlegend=True,
+            template='plotly_white',
+        )
+    else:
+        tendencia.add_trace(
+            go.Scatter(
+                x=poes_tendencia.index,
+                y=poes_tendencia['Promedios Diarios'],
+                mode='markers',
+                marker=dict(color='blue', size=5),
+                hovertemplate='%{x}<br><extra>%{y}</extra>',
+                name='Promedios Diarios',
+            )
+        )
+        tendencia.update_layout(
+            title_text="Promedios Diarios POES",
+            height=350,
+            yaxis_title="Calificación",
+            xaxis_title="Fecha",
+            showlegend=False,
+            template='plotly_white',
+        )
 
+    return tendencia, poes_fig, distribucion

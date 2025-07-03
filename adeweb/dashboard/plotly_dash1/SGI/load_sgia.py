@@ -35,21 +35,22 @@ def load_control_documental():
         'Cultura Organizacional (A) ': 'I:M'
     }
     # workbook="Excel/Control de actualización de vigencia por documento D.xlsm"
-    workbook=r"//192.168.10.2/Compartidos/SGI/Documentación/INDICADORES DE RECARGA/Control de actualización de vigencia por documento D.xlsm"
-    for sheet_name, usecols in sheets.items():
-        try:
-            df = pd.read_excel(
-                workbook,
-                sheet_name=sheet_name,
-                usecols=usecols,
-                skiprows=2,
-                nrows=1
-            )
-            df['Departamento'] = sheet_name
-            df1.append(df)
-        except:
-            print(f'Error en la hoja {sheet_name}.')
-
+    with pd.ExcelFile(r"//192.168.10.2/Compartidos/SGI/Documentación/INDICADORES DE RECARGA/Control de actualización de vigencia por documento D.xlsm", engine="openpyxl") as workbook:
+        for sheet_name, usecols in sheets.items():
+            try:
+                df = pd.read_excel(
+                    workbook,
+                    sheet_name=sheet_name,
+                    usecols=usecols,
+                    skiprows=2,
+                    nrows=1
+                )
+                df['Departamento'] = sheet_name
+                df1.append(df)
+            except:
+                print(f'Error en la hoja {sheet_name}.')
+        workbook.close()
+    
     df1 = pd.concat(df1)
     df1.rename(
         columns={x: x.replace('(A)', '').strip().capitalize() for x in df1.columns},
@@ -69,79 +70,82 @@ def load_control_documental():
 ###### TIF                          Return df
 def load_tif():
     # workbook="Excel/Seguimiento TIF.xlsx"
-    workbook=r"//192.168.10.2/Compartidos/SGI/GAP/Seguimiento Indicador TIF/Seguimiento TIF.xlsx"
-    df = pd.read_excel(
-        io=workbook,
-        skiprows=1
-        )
-    df.columns = df.columns.str.strip()
-    df['Fecha'] = pd.to_datetime(df['Fecha'], errors='coerce')
-    df['Fecha Final'] = pd.to_datetime(df['Fecha Final'], errors='coerce')
-    df['Fecha Vencimiento'] = pd.to_datetime(df['Fecha Vencimiento'], errors='coerce')
-    df['Días transcurridos'] = (pd.Timestamp.today() - df['Fecha']).dt.days
-    df['Días propuestos'] = (df['Fecha Vencimiento']-df['Fecha']).dt.days
-    df['Días propuestos'] = df['Días propuestos'].fillna(0)
-    df['Retraso'] = df['Días transcurridos'] - df['Días propuestos']
-    df['Mes'] = df['Fecha'].dt.month
-    df['Mes'] = df['Mes'].map(
-        {
-            1:'Enero',
-            2:'Febrero',
-            3:'Marzo',
-            4:'Abril',
-            5:'Mayo',
-            6:'Junio',
-            7:'Julio',
-            8:'Agosto',
-            9:'Septiembre',
-            10:'Octubre',
-            11:'Noviembre',
-            12:'Diciembre'
-            }
-        )
+    with pd.ExcelFile(r"//192.168.10.2/Compartidos/SGI/GAP/Seguimiento Indicador TIF/Seguimiento TIF.xlsx", engine="openpyxl") as workbook:
+        df = pd.read_excel(
+            workbook,
+            skiprows=1
+            )
+        workbook.close()
+        df.columns = df.columns.str.strip()
+        df['Fecha'] = pd.to_datetime(df['Fecha'], errors='coerce')
+        df['Fecha Final'] = pd.to_datetime(df['Fecha Final'], errors='coerce')
+        df['Fecha Vencimiento'] = pd.to_datetime(df['Fecha Vencimiento'], errors='coerce')
+        df['Días transcurridos'] = (pd.Timestamp.today() - df['Fecha']).dt.days
+        df['Días propuestos'] = (df['Fecha Vencimiento']-df['Fecha']).dt.days
+        df['Días propuestos'] = df['Días propuestos'].fillna(0)
+        df['Retraso'] = df['Días transcurridos'] - df['Días propuestos']
+        df['Mes'] = df['Fecha'].dt.month
+        df['Mes'] = df['Mes'].map(
+            {
+                1:'Enero',
+                2:'Febrero',
+                3:'Marzo',
+                4:'Abril',
+                5:'Mayo',
+                6:'Junio',
+                7:'Julio',
+                8:'Agosto',
+                9:'Septiembre',
+                10:'Octubre',
+                11:'Noviembre',
+                12:'Diciembre'
+                }
+            )
 
-    df1 = df
-    df1 = df1.sort_values('Fecha', ascending=True)
-    df1 = df1[df1['Estatus']!='CERRADA']
-    df1 = df1.groupby('Departamento')['Estatus'].count()
-    df1 = df1.reset_index().sort_values('Departamento')
-    df1 = df1.rename(columns={'Estatus':'Abiertas'})
-    df1.index = df1['Departamento']
-    df1 = df1.drop(columns='Departamento')
-    
-    df2 = df
-    df2 = df2.sort_values('Fecha', ascending=True)
-    df2 = df2[df2['Estatus']=='Completado']
-    df2 = df2.groupby('Departamento')['Estatus'].count()
-    df2 = df2.reset_index().sort_values('Departamento')
-    df2 = df2.rename(columns={'Estatus':'Cerradas'})
-    df2.index = df2['Departamento']
-    df2 = df2.drop(columns='Departamento')
         
-    df3 = pd.concat([df1, df2], axis=1)
-    df3['Eficiencia'] = ((df3['Abiertas'] / (df3['Abiertas']+df3['Cerradas']))*100).round(2)
-    df3 = df3.fillna(0)
-    
-    return df
+        df1 = df
+        df1 = df1.sort_values('Fecha', ascending=True)
+        df1 = df1[df1['Estatus']!='CERRADA']
+        df1 = df1.groupby('Departamento')['Estatus'].count()
+        df1 = df1.reset_index().sort_values('Departamento')
+        df1 = df1.rename(columns={'Estatus':'Abiertas'})
+        df1.index = df1['Departamento']
+        df1 = df1.drop(columns='Departamento')
+        
+        df2 = df
+        df2 = df2.sort_values('Fecha', ascending=True)
+        df2 = df2[df2['Estatus']=='Completado']
+        df2 = df2.groupby('Departamento')['Estatus'].count()
+        df2 = df2.reset_index().sort_values('Departamento')
+        df2 = df2.rename(columns={'Estatus':'Cerradas'})
+        df2.index = df2['Departamento']
+        df2 = df2.drop(columns='Departamento')
+            
+        df3 = pd.concat([df1, df2], axis=1)
+        df3['Eficiencia'] = ((df3['Abiertas'] / (df3['Abiertas']+df3['Cerradas']))*100).round(2)
+        df3 = df3.fillna(0)
+        
+        return df
 
 ###### Acciones correctivas         Retrun df_ac
 def load_ac():
-    # workbook = r"Excel\Acciones correctivas.xlsx"
-    workbook = r"//192.168.10.2/Compartidos/SGI/Residuos/Acciones correctivas.xlsx"
-    df_ac = pd.read_excel(
-        io = workbook,
-        sheet_name ='SeguimientoAC',
-        usecols='A:N',
-        skiprows=10,
-        # nrows=50,  #Comentar carga el registro desde 2022
-        engine="openpyxl"
-    )
-
-    df_ac.columns = df_ac.columns.str.strip()
-    df_ac = df_ac.drop(
+    with pd.ExcelFile(r"C:/Users/daniel.santoyo/OneDrive - EMPACADORA DILUSA DE AGUASCALIENTES SA DE CV/EDA DSA/Auditorías/IndicadorAC1.xlsx", engine="openpyxl") as workbook:
+        # sheets = ["SeguimientoAC-2023", "SeguimientoAC"]
+    # for sheet in sheets:
+        df = pd.read_excel(
+            io = workbook,
+            sheet_name = "SeguimientoAC",
+            usecols='A:O',
+            skiprows=10,
+        )
+        workbook.close()
+        df.columns = df.columns.str.strip()
+    df = df.drop(
         columns=[
             'Descripción de la no conformidad', 'Norma', 'Origen de desviación']
         )
 
-    return df_ac
+    return df
+
+
 

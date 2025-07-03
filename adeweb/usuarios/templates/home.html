@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Inicio | Monster Web{% endblock %}
+{% block title %}Inicio |{% endblock %}
 
 {% block content %}
 <h2 class="mb-4">Panel de Control</h2>
@@ -10,7 +10,7 @@
         <div class="card h-100 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title">Dashboard</h5>
-                <p class="card-text">Revisa el progreso de los objevitos.</p>
+                <p class="card-text">Revisa el progreso de los objetivos.</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <a href="{% url 'dashboard:dashboard' %}" class="btn btn-sm btn-outline-primary">Ver más</a>
                     <small class="text-muted">9 archivos</small>
@@ -23,11 +23,11 @@
     <div class="col-md-6 col-lg-3 mb-4">
         <div class="card h-100 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title">Proyectos</h5>
-                <p class="card-text">Administra tus proyectos activos.</p>
+                <h5 class="card-title">ACI </h5>
+                <p class="card-text">Administra tus certificados de calidad.</p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <a href="#" class="btn btn-sm btn-outline-primary">Ver más</a>
-                    <small class="text-muted">4 proyectos</small>
+                    <a href="{% url 'ACI:aci_home' %}" class="btn btn-sm btn-outline-primary">Ver más</a>
+                    <small class="text-muted">xxx certificados</small>
                 </div>
             </div>
         </div>

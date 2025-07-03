@@ -28,18 +28,30 @@ class CustomUserCreationForm(UserCreationForm):
         return email
     
 # Formulario para actualizar usuarios personalizados
+from django.contrib.auth.forms import UserChangeForm
+from django import forms
+from .models import CustomUser
+
 class CustomUserChangeForm(UserChangeForm):
     email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
     first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     departamento = forms.ChoiceField(choices=DEPARTAMENTO, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
-    jefe_directo = forms.ChoiceField(choices=DEPARTAMENTO, required=False, widget=forms.Select(attrs={'class': 'form-select'}))
-    ubicacion = forms.CharField(required=False, max_length=100)
-
-    password1 = forms.CharField(max_length=30, required=False, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(max_length=30, required=False, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    jefe_directo = forms.ModelChoiceField(
+        queryset=CustomUser.objects.filter(is_superuser=True),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        empty_label="Seleccione un jefe directo"  # Añade esto
+    )
     class Meta:
         model = CustomUser
         fields = ('email', 'first_name', 'last_name', 
-                'departamento', 'jefe_directo', 'ubicacion', 'password1', 'password2')
+                'departamento', 'jefe_directo', 'ubicacion')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.pop('password', None)
+        # Asegúrate de que el queryset esté actualizado
+        self.fields['jefe_directo'].queryset = CustomUser.objects.filter(is_superuser=True)
+
 

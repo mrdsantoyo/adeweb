@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Inicio |{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-1 border-1">  <!-- Removemos padding lateral -->
+    <div class="card shadow border-0">  <!-- Quitamos bordes -->
+        <div class="card-body p-2">  <!-- Quitamos padding -->
+            <h2 class="mb-4">ACI :)</h2>
+            <p class="mb-4">Bienvenido a la página de ACI. Aquí puedes generar certificados y realizar otras acciones relacionadas con ACI.</p>
+            <p class="mb-4">Para generar un certificado, por favor haz clic en el botón de abajo.</p>
+            <a href="{% url 'ACI:generar_certificado' %}">Generar Certificado</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

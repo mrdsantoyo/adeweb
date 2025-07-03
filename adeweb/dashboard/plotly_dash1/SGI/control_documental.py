@@ -40,8 +40,20 @@ def control_docs():
     )
     return docs
 
-# def eficiencia_documental():
-df_docs=load_control_documental()
-df_docs['Eficiencia'] = ((df_docs['Total de Publicados'] / df_docs['Total'])*100).round(2)
-df_docs = df_docs.drop(columns=['Total de Publicados', 'En flujo', 'Ausencia', 'Vigencia v.','Rechazados', 'Total'])
-#  df_docs
+def eficiencia_documental():
+    df_docs=load_control_documental().reset_index()
+    df_docs['Eficiencia'] = ((df_docs['Total de Publicados'] / df_docs['Total'])*100).round(2)
+    df_docs = df_docs.drop(columns=['Total de Publicados', 'En flujo', 'Ausencia', 'Vigencia v.','Rechazados', 'Total'])
+    return df_docs
+
+# docs = eficiencia_documental()
+# print(docs)
+
+
+
+
+
+
+
+
+

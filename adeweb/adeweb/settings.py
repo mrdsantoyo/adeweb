@@ -25,7 +25,13 @@ SECRET_KEY = "django-insecure-$4anv-()8kv-7oe@$t-av3n1rjknhpqf0o)8y5d-c%8v)jg^nu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'dashboardtest.loca.lt']
+CSRF_TRUSTED_ORIGINS = [
+    'https://dashboardtest.loca.lt', # MUY IMPORTANTE: Incluye el 'https://'
+]
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -41,6 +47,7 @@ INSTALLED_APPS = [
     'channels',
     "usuarios",
     "dashboard",
+    "ACI",
     ]   
 
 MIDDLEWARE = [
@@ -69,8 +76,6 @@ PLOTLY_DASH = {
     "inject_plotly": True,
 
     "serve_locally": False,
-    # "insert_demo_migrations": False,
-    # "inject_stylesheet": True,
     "external_stylesheets": [
         '/static/css/styles.css',  # Tu hoja de estilos personalizada
     ],
@@ -83,7 +88,6 @@ PLOTLY_DASH = {
         "https://unpkg.com/dash-html-components@2.0.0/dash_html_components/dash_html_components.min.js",
         "https://unpkg.com/dash-renderer@1.9.1/dash_renderer/dash_renderer.min.js",
     ],
-
 }
 
 ROOT_URLCONF = "adeweb.urls"
